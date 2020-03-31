@@ -1,13 +1,17 @@
 SELECT DISTINCT (substr(STR(?gene),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHERE {
   VALUES ?virus {
-    wd:Q82069695 # SARS-CoV-2
+    wd:Q278567   # SARSr-CoV
+    wd:Q4902157  # MERS-CoV
+    wd:Q8351095  # NL63
+    wd:Q16000326 # SL-CoV-WIV1
+    wd:Q16983356 # 229E
     wd:Q16983360 # HKU1
     wd:Q16991954 # OC43
-    wd:Q8351095  # NL63 
-    wd:Q16983356 # 229E
-    wd:Q4902157  # MERS-CoV
+    wd:Q34967815 # SARS coronavirus
+    wd:Q82069695 # SARS-CoV-2
     wd:Q85438966 # SARS-CoV
-    wd:Q278567   # SARSr-CoV
+    wd:Q85939995 # SHC014-CoV
+    wd:Q88162038 # Bat SARS coronavirus Rp1
   }
   ?gene wdt:P703 ?virus ; wdt:P31 wd:Q7187 .
   OPTIONAL { ?gene wdt:P351 ?ncbi }
