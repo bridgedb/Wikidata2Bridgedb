@@ -1,4 +1,5 @@
-SELECT DISTINCT (substr(STR(?gene),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHERE {
+# SELECT DISTINCT ?wdRoot ?route (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?protein ?refseq ?uniprot WHERE {
+SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHERE {
   VALUES ?virus {
     wd:Q278567   # SARSr-CoV
     wd:Q4902157  # MERS-CoV
@@ -13,11 +14,23 @@ SELECT DISTINCT (substr(STR(?gene),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHER
     wd:Q85939995 # SHC014-CoV
     wd:Q88162038 # Bat SARS coronavirus Rp1
   }
-  ?gene wdt:P703 ?virus ; wdt:P31 wd:Q7187 .
-  OPTIONAL { ?gene wdt:P351 ?ncbi }
-  OPTIONAL {
-    ?gene wdt:P688 | ^wdt:P702 ?protein .
-    OPTIONAL { ?protein wdt:P637 ?refseq }
-    OPTIONAL { ?protein wdt:P352 ?uniprot }
+  {
+    # genes
+    ?wdRoot wdt:P703 ?virus ; wdt:P31 wd:Q7187 .
+    OPTIONAL { ?wdRoot wdt:P351 ?ncbi }
+    OPTIONAL {
+      ?wdRoot wdt:P688 | ^wdt:P702 ?protein .
+      OPTIONAL { ?protein wdt:P637 ?refseq }
+      OPTIONAL { ?protein wdt:P352 ?uniprot }
+    }
+    # BIND ("via gene" AS ?route)
+  }
+  UNION
+  {
+    # proteins
+    ?wdRoot wdt:P703 ?virus ; wdt:P31 wd:Q8054 .
+    OPTIONAL { ?wdRoot wdt:P637 ?refseq }
+    OPTIONAL { ?wdRoot wdt:P352 ?uniprot }
+    # BIND ("via protein" AS ?route)
   }
 } ORDER BY ?ncbi ?wikidata
