@@ -1,0 +1,14 @@
+SELECT DISTINCT ?taxonLabel (substr(STR(?complex),32) AS ?wikidata) (CONCAT("CPX-", ?cpxShort) AS ?cpx) ?reactome WHERE {
+  {
+    ?complex wdt:P7718 ?cpxShort .
+    OPTIONAL { ?complex wdt:P3937 ?reactome . }
+  }
+  UNION
+  {
+    ?complex wdt:P31/wdt:P279* wd:Q22325163 ;
+             wdt:P3937 ?reactome .
+    OPTIONAL { ?complex wdt:P7718 ?cpxShort . }
+  }
+  OPTIONAL { ?complex wdt:P703 ?taxon }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
