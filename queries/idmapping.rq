@@ -1,5 +1,5 @@
 # SELECT DISTINCT ?wdRoot ?route (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?protein ?refseq ?uniprot WHERE {
-SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHERE {
+SELECT DISTINCT ?virusLabel (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHERE {
   VALUES ?virus {
     wd:Q278567   # SARSr-CoV
     wd:Q4902157  # MERS-CoV
@@ -24,13 +24,20 @@ SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WH
       OPTIONAL { ?protein wdt:P352 ?uniprot }
     }
     # BIND ("via gene" AS ?route)
+    BIND (?wdRoot AS ?gene)
   }
   UNION
   {
     # proteins
     ?wdRoot wdt:P703 ?virus ; wdt:P31 wd:Q8054 .
+    OPTIONAL { 
+      ?gene wdt:P688 | ^wdt:P702 ?wdRoot
+      OPTIONAL { ?gene wdt:P351 ?ncbi }
+    }
     OPTIONAL { ?wdRoot wdt:P637 ?refseq }
     OPTIONAL { ?wdRoot wdt:P352 ?uniprot }
     # BIND ("via protein" AS ?route)
+    BIND (?wdRoot AS ?protein)
   }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 } ORDER BY ?ncbi ?wikidata
