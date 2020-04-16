@@ -64,8 +64,10 @@ public class Wikidata2BridgeDb {
 		setupDatasources();
 		File outputDir = new File("output");
 		outputDir.mkdir();
-		File outputFile = new File(outputDir, "humancorona.bridge");
+		File outputFile = new File(outputDir, "humancorona-2020-04-14.bridge");
 		createDb(outputFile);
+		
+		File oldDb = new File(outputDir, "humancorona-2020-04-02.bridge");
 		
 		String query = readQuery("queries/idmapping.rq");
 		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
@@ -74,11 +76,13 @@ public class Wikidata2BridgeDb {
 		TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
 
 		Map<Xref, Set<Xref>> map = new HashMap<Xref, Set<Xref>>();
+		Map<Xref, String> virusLabel = new HashMap<Xref, String>();
 		for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
-//			System.out.println(bs);
 			String wikidata = bs.getBinding("wikidata").getValue().stringValue();
+			String vl = bs.getBinding("virusLabel").getValue().stringValue();
 			Xref x = new Xref(wikidata, dsWikiData);
 			map.put(x, new HashSet<Xref>());
+			virusLabel.put(x,vl);
 			if(bs.getBindingNames().contains("ncbi")) {
 				String ncbi = bs.getBinding("ncbi").getValue().stringValue();
 				map.get(x).add(new Xref(ncbi, dsNcbi));
@@ -92,10 +96,10 @@ public class Wikidata2BridgeDb {
 				map.get(x).add(new Xref(uniprot, dsUniprot));
 			}
 		}
-		addEntries(map);
+		addEntries(map, virusLabel);
 		newDb.finalize();
 		System.out.println("[INFO]: Database finished.");
-		runQC(outputFile, outputFile);
+		runQC(oldDb, outputFile);
 	}
 	
 	private static void createDb(File outputFile) throws IDMapperException {
@@ -129,11 +133,14 @@ public class Wikidata2BridgeDb {
 		return new String(encoded, encoding);
 	}
 
-	private static void addEntries(Map<Xref, Set<Xref>> dbEntries) throws IDMapperException {
+	private static void addEntries(Map<Xref, Set<Xref>> dbEntries, Map<Xref, String> virusLabel) throws IDMapperException {
 		Set<Xref> addedXrefs = new HashSet<Xref>();
 		for (Xref ref : dbEntries.keySet()) {
 			Xref mainXref = ref;
-			if (addedXrefs.add(mainXref)) newDb.addGene(mainXref);
+			if (addedXrefs.add(mainXref)) {
+				newDb.addGene(mainXref);
+				newDb.addAttribute(mainXref, "virus", virusLabel.get(mainXref));
+			}
 			newDb.addLink(mainXref, mainXref);
 
 			for (Xref rightXref : dbEntries.get(mainXref)) {
