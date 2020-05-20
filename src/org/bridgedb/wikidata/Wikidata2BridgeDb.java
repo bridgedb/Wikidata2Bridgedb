@@ -15,6 +15,7 @@ limitations under the License.
  **/
 package org.bridgedb.wikidata;
 
+import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -58,16 +59,17 @@ public class Wikidata2BridgeDb {
 	private static DataSource dsNcbi;
 	private static DataSource dsRefseq;
 	private static DataSource dsUniprot;
+	private static DataSource dsGuideToPharma;
 	private static GdbConstruct newDb;
 	
 	public static void main(String[] args) throws IOException, IDMapperException, SQLException {
 		setupDatasources();
 		File outputDir = new File("output");
 		outputDir.mkdir();
-		File outputFile = new File(outputDir, "humancorona-2020-04-14.bridge");
+		File outputFile = new File(outputDir, "humancorona-2020-05-20.bridge");
 		createDb(outputFile);
 		
-		File oldDb = new File(outputDir, "humancorona-2020-04-02.bridge");
+		File oldDb = new File(outputDir, "humancorona-2020-04-14.bridge");
 		
 		String query = readQuery("queries/idmapping.rq");
 		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
@@ -95,6 +97,10 @@ public class Wikidata2BridgeDb {
 				String uniprot = bs.getBinding("uniprot").getValue().stringValue();
 				map.get(x).add(new Xref(uniprot, dsUniprot));
 			}
+			if(bs.getBindingNames().contains("guideToPharma")) {
+				String gptarget = bs.getBinding("guideToPharma").getValue().stringValue();
+				map.get(x).add(new Xref(gptarget, dsGuideToPharma));
+			}
 		}
 		addEntries(map, virusLabel);
 		newDb.finalize();
@@ -121,6 +127,7 @@ public class Wikidata2BridgeDb {
 		dsNcbi = DataSource.getExistingBySystemCode("L");
 		dsRefseq = DataSource.getExistingBySystemCode("Q");
 		dsUniprot = DataSource.getExistingBySystemCode("S");
+		dsGuideToPharma = DataSource.register("Gpt", "Guide to Pharmacology Targets").asDataSource();
 	}
 
 	private static String readQuery(String path) throws IOException {

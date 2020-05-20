@@ -1,5 +1,5 @@
 # SELECT DISTINCT ?wdRoot ?route (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?protein ?refseq ?uniprot WHERE {
-SELECT DISTINCT ?virusLabel (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq ?uniprot WHERE {
+SELECT DISTINCT ?virusLabel (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq ?uniprot ?guideToPharma WHERE {
   VALUES ?virus {
     wd:Q278567   # SARSr-CoV
     wd:Q4902157  # MERS-CoV
@@ -22,6 +22,7 @@ SELECT DISTINCT ?virusLabel (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq
       ?wdRoot wdt:P688 | ^wdt:P702 ?protein .
       OPTIONAL { ?protein wdt:P637 ?refseq }
       OPTIONAL { ?protein wdt:P352 ?uniprot }
+      OPTIONAL { ?protein wdt:P5458 ?guideToPharma }
     }
     # BIND ("via gene" AS ?route)
     BIND (?wdRoot AS ?gene)
