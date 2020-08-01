@@ -2,6 +2,11 @@
 
 Creation of human and SARS-related corona virus gene/protein mapping database.
 
+## How to get the data in the BridgeDb files?
+
+The data comes from Wikidata, and can be retrieved by running the SPARQL queries in the [queries](queries) folder
+with the [Wikidata Query Service](https://query.wikidata.org/).
+
 ## How to cite?
 
 If you use material from this repository, please cite either or both of these:
