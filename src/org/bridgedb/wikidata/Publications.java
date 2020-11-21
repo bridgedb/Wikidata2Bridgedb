@@ -61,6 +61,7 @@ public class Publications {
 		outputDir.mkdir();
 		File outputFile = new File(outputDir, "publications.bridge");
 		createDb(outputFile);
+		File releasedDb = new File(outputDir, "publications_20200510.bridge");
 		
 		BufferedReader file = new BufferedReader(new FileReader("publications.tsv"));
         String dataRow = file.readLine(); // skip the first line
@@ -104,7 +105,7 @@ public class Publications {
 		newDb.finalize();
 		file.close();
 		System.out.println("[INFO]: Database finished.");
-		runQC(outputFile, outputFile);
+		runQC(releasedDb, outputFile);
 	}
 	
 	private static void createDb(File outputFile) throws IDMapperException {
@@ -116,6 +117,7 @@ public class Publications {
 		newDb.setInfo("BUILDDATE", dateStr);
 		newDb.setInfo("DATASOURCENAME", "Wikidata");
 		newDb.setInfo("DATASOURCEVERSION", "1.0.0");
+		newDb.setInfo("BRIDGEDBVERSION", "3.0.2");
 		newDb.setInfo("SERIES", "publications");
 		newDb.setInfo("DATATYPE", "Article");	
 	}
@@ -123,8 +125,8 @@ public class Publications {
 	private static void setupDatasources() {
 		DataSourceTxt.init();
 		dsWikiData = DataSource.getExistingBySystemCode("Wd");
-		dsDOI = DataSource.register("Pbd", "Digital Object Identifier").asDataSource();
-		dsPubMed = DataSource.register("Pbm", "PubMed").asDataSource();
+		dsDOI = DataSource.getExistingBySystemCode("Pbd");
+		dsPubMed = DataSource.getExistingBySystemCode("Pbm");
 	}
 
 	private static String readQuery(String path) throws IOException {
