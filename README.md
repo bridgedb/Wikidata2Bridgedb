@@ -7,6 +7,17 @@ Creation of human and SARS-related corona virus gene/protein mapping database.
 The data comes from Wikidata, and can be retrieved by running the SPARQL queries in the [queries](queries) folder
 with the [Wikidata Query Service](https://query.wikidata.org/).
 
+```shell
+curl -H "Accept: text/tab-separated-values" --data-urlencode query@queries/publications.rq -G https://query.wikidata.org/bigdata/namespace/wdq/sparql -o publications.tsv
+```
+
+## How to create a Derby file
+
+```shell
+mvn clean install assembly:single
+java -cp target/Wikidata2BridgeDb-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.bridgedb.wikidata.Publications
+```
+
 ## How to cite?
 
 If you use material from this repository, please cite either or both of these:
