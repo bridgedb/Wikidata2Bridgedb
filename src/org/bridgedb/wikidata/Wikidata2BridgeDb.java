@@ -129,7 +129,7 @@ public class Wikidata2BridgeDb {
 		dsNcbi = DataSource.getExistingBySystemCode("L");
 		dsRefseq = DataSource.getExistingBySystemCode("Q");
 		dsUniprot = DataSource.getExistingBySystemCode("S");
-		dsGuideToPharma = DataSource.register("Gpt", "Guide to Pharmacology Targets").asDataSource();
+		dsGuideToPharma = DataSource.getExistingBySystemCode("Gpt");
 	}
 
 	private static String readQuery(String path) throws IOException {
