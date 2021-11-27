@@ -13,6 +13,21 @@ SELECT DISTINCT ?virusLabel (substr(STR(?wdRoot),32) AS ?wikidata) ?ncbi ?refseq
     wd:Q85438966 # SARS-CoV
     wd:Q85939995 # SHC014-CoV
     wd:Q88162038 # Bat SARS coronavirus Rp1
+    wd:Q88169973 # SARS coronavirus B024
+    wd:Q91561236 # RaTG13
+    wd:Q97709258 # Bat SARS CoV Rf1
+    wd:Q97709416 # Bat SARS CoV Rm1
+    wd:Q97709493 # Bat SARS CoV Rp3
+    wd:Q104400171 # SARS-CoV-2 Beta variant
+    wd:Q104857014 # RmYN02
+    wd:Q105221659 # Civet SARS-CoV
+    wd:Q105686530 # RacCS203
+    wd:Q105759568 # Rc-o319
+    wd:Q105759618 # BtKY72/Rhinolophus sp./Kenya/2007
+    wd:Q105759623 # BtCoV/BM48-31/Rhi bla/Bulgaria/2008
+    wd:Q107719644 # RhGB01
+    wd:Q108616377 # BANAL-52
+    wd:Q108616505 # BANAL-103
   }
   {
     # genes
