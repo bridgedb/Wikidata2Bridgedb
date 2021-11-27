@@ -3,6 +3,11 @@
   <groupId>org.bridgedb.wikidata</groupId>
   <artifactId>Wikidata2BridgeDb</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+
+  <properties>
+    <bridgedb.version>3.0.7</bridgedb.version>
+  </properties>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -34,27 +39,27 @@
 	<dependency>
       <groupId>org.bridgedb</groupId>
       <artifactId>org.bridgedb</artifactId>
-      <version>3.0.7</version>
+      <version>${bridgedb.version}</version>
     </dependency>
 	<dependency>
       <groupId>org.bridgedb</groupId>
       <artifactId>org.bridgedb.bio</artifactId>
-      <version>3.0.7</version>
+      <version>${bridgedb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bridgedb</groupId>
       <artifactId>org.bridgedb.rdb</artifactId>
-      <version>3.0.7</version>
+      <version>${bridgedb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bridgedb</groupId>
       <artifactId>org.bridgedb.rdb.construct</artifactId>
-      <version>3.0.7</version>
+      <version>${bridgedb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.bridgedb</groupId>
       <artifactId>org.bridgedb.tools.qc</artifactId>
-      <version>3.0.7</version>
+      <version>${bridgedb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
