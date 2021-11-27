@@ -1,5 +1,6 @@
 /**
 Copyright 2020 Martina Kutmon
+          2021 Egon Willighagen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -61,16 +62,17 @@ public class Wikidata2BridgeDb {
 	private static DataSource dsUniprot;
 	private static DataSource dsGuideToPharma;
 	private static GdbConstruct newDb;
-	
+
 	public static void main(String[] args) throws IOException, IDMapperException, SQLException {
 		setupDatasources();
 		File outputDir = new File("output");
 		outputDir.mkdir();
-		File outputFile = new File(outputDir, "humancorona-2020-05-20.bridge");
+		String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		File outputFile = new File(outputDir, "humancorona-" + dateStr + ".bridge");
 		createDb(outputFile);
-		
-		File oldDb = new File(outputDir, "humancorona-2020-04-14.bridge");
-		
+
+		File oldDb = new File(outputDir, "humancorona-2020-11-30.bridge");
+
 		String query = readQuery("queries/idmapping.rq");
 		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
 		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
@@ -85,19 +87,19 @@ public class Wikidata2BridgeDb {
 			Xref x = new Xref(wikidata, dsWikiData);
 			map.put(x, new HashSet<Xref>());
 			virusLabel.put(x,vl);
-			if(bs.getBindingNames().contains("ncbi")) {
+			if(bs.getBindingNames().contains("ncbi") && bs.getBinding("ncbi") != null) {
 				String ncbi = bs.getBinding("ncbi").getValue().stringValue();
 				map.get(x).add(new Xref(ncbi, dsNcbi));
 			}
-			if(bs.getBindingNames().contains("refseq")) {
+			if(bs.getBindingNames().contains("refseq") && bs.getBinding("refseq") != null) {
 				String refseq = bs.getBinding("refseq").getValue().stringValue();
 				map.get(x).add(new Xref(refseq, dsRefseq));
 			}
-			if(bs.getBindingNames().contains("uniprot")) {
+			if(bs.getBindingNames().contains("uniprot") && bs.getBinding("uniprot") != null) {
 				String uniprot = bs.getBinding("uniprot").getValue().stringValue();
 				map.get(x).add(new Xref(uniprot, dsUniprot));
 			}
-			if(bs.getBindingNames().contains("guideToPharma")) {
+			if(bs.getBindingNames().contains("guideToPharma") && bs.getBinding("guideToPharma") != null) {
 				String gptarget = bs.getBinding("guideToPharma").getValue().stringValue();
 				map.get(x).add(new Xref(gptarget, dsGuideToPharma));
 			}
