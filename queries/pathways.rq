@@ -1,0 +1,3 @@
+SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?wpid WHERE {
+  ?wdRoot wdt:P2410 ?wpid .
+}
