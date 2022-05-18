@@ -1,0 +1,5 @@
+SELECT DISTINCT ?taxonLabel (substr(STR(?gene),32) AS ?wikidata) ?ensembl WHERE {
+  ?gene wdt:P594 ?ensembl .
+  OPTIONAL { ?gene wdt:P703 ?taxon }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
