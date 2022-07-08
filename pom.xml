@@ -5,7 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
-    <bridgedb.version>3.0.10</bridgedb.version>
+    <bridgedb.version>3.0.15</bridgedb.version>
   </properties>
 
   <build>
