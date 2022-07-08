@@ -1,4 +1,4 @@
-SELECT DISTINCT ?nm ?label ?eNM WHERE {
+SELECT DISTINCT (substr(STR(?nm),32) AS ?wikidata) (STR(?label) AS ?jrc) ?eNM WHERE {
   ?nm wdt:P31 wd:Q47461491 ;
       rdfs:label ?label .
   OPTIONAL{?nm wdt:P2888 ?eNM .}
