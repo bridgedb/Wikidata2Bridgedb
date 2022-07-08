@@ -1,0 +1,5 @@
+SELECT DISTINCT ?nm ?label ?eNM WHERE {
+  ?nm wdt:P31 wd:Q47461491 ;
+      rdfs:label ?label .
+  OPTIONAL{?nm wdt:P2888 ?eNM .}
+} ORDER BY ?label
