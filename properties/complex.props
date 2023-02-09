@@ -1,0 +1,4 @@
+output.file=complexes
+query.file=complexes.rq
+old.db=https://ndownloader.figshare.com/files/22624346
+data.type=Complexes

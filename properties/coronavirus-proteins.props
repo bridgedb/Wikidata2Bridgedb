@@ -1,0 +1,4 @@
+output.file=coronavirus-proteins
+query.file=coronavirus-proteins.rq
+old.db=https://zenodo.org/record/5734440/files/humancorona-2021-11-27.bridge?download=1
+data.type=GeneProduct
