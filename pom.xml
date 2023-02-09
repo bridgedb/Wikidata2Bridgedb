@@ -5,7 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
-    <bridgedb.version>3.0.15</bridgedb.version>
+    <bridgedb.version>3.0.18</bridgedb.version>
   </properties>
 
   <build>
@@ -60,18 +60,6 @@
       <groupId>org.bridgedb</groupId>
       <artifactId>org.bridgedb.tools.qc</artifactId>
       <version>${bridgedb.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.14.2.0</version>
-      <type>jar</type>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.14.2.0</version>
     </dependency>
   </dependencies>
 </project>
