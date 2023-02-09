@@ -5,3 +5,4 @@
 .project
 derby.log
 *.tsv
+tmp/
