@@ -1,5 +1,6 @@
 /**
-Copyright 2022 
+Copyright 2020-2023 Martina Kutmon
+               		Egon Willighagen
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,45 +16,36 @@ limitations under the License.
  **/
 package org.bridgedb.wikidata;
 
-import java.io.DataOutput;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.DataSourceTxt;
-import org.bridgedb.rdb.construct.DBConnector;
-import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.GdbConstruct;
-import org.bridgedb.rdb.construct.GdbConstructImpl3;
-import org.bridgedb.tools.qc.BridgeQC;
+import org.bridgedb.wikidata.utils.Utils;
 import org.eclipse.rdf4j.query.BindingSet;
-import org.eclipse.rdf4j.query.QueryLanguage;
 import org.eclipse.rdf4j.query.QueryResults;
 import org.eclipse.rdf4j.query.TupleQuery;
-import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 
 /**
- * Retrieves human coronavirus gene-protein mappings
- * (Wikidata, NCBI Gene, Refseq, UniProt) 
- * and stores them in BridgeDb derby database file
+ * Retrieves human coronavirus gene-protein mappings (Wikidata, NCBI Gene,
+ * Refseq, UniProt) and stores them in BridgeDb derby database file
+ * 
  * @author mkutmon
  *
  */
-public class SarsCov2Proteins {
+public class CoronavirusProteins {
 
 	private static DataSource dsWikiData;
 	private static DataSource dsNcbi;
@@ -62,22 +54,47 @@ public class SarsCov2Proteins {
 	private static DataSource dsGuideToPharma;
 	private static GdbConstruct newDb;
 
+	/**
+	 * @param args
+	 * @throws IOException
+	 * @throws IDMapperException
+	 * @throws SQLException
+	 */
 	public static void main(String[] args) throws IOException, IDMapperException, SQLException {
+		System.out.println("[INFO]: Initial setup");
 		setupDatasources();
-		File outputDir = new File("output");
-		outputDir.mkdir();
+		Properties props = new Properties();
+		props.load(new FileInputStream(new File("properties/coronavirus-proteins.props")));
 		String dateStr = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		File outputFile = new File(outputDir, "humancorona-" + dateStr + ".bridge");
-		createDb(outputFile);
 
-		File oldDb = new File(outputDir, "humancorona-2020-11-30.bridge");
+		// create output directy and database with date in file name
+		System.out.println("[INFO]: Start database creation for " + props.getProperty("output.file"));
+		File outputDir = new File("output",dateStr);
+		outputDir.mkdir();
+		File outputFile = new File(outputDir, props.getProperty("output.file") + "-" + dateStr + ".bridge");
+		newDb = Utils.createDb(outputFile, "Coronavirus", props.getProperty("data.type"), "1.0.0");
+		
+		// connect to wikidata
+		System.out.println("[INFO]: Connect to Wikidata");
+		TupleQuery tupleQuery = Utils.connect2Wikidata("coronavirus-proteins.rq");
 
-		String query = readQuery("queries/idmapping.rq");
-		SPARQLRepository sparqlRepository = new SPARQLRepository("https://query.wikidata.org/sparql");
-		RepositoryConnection sparqlConnection = sparqlRepository.getConnection();
 
-		TupleQuery tupleQuery = sparqlConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
-
+		// start filling database
+		System.out.println("[INFO]: Start filling BridgeDb database");
+		fillDb(tupleQuery);
+		
+		// write database
+		newDb.finalize();
+		System.out.println("[INFO]: Database finished: " + outputFile.getName() + " (" + outputFile.getTotalSpace() + ")");
+		
+		
+		if(props.getProperty("old.db") != null && !props.getProperty("old.db").equals("")) {
+			System.out.println("[INFO]: Quality control and comparison with previous version\n");
+			Utils.runQC(props.getProperty("old.db"), outputFile);
+		}
+	}
+	
+	private static void fillDb(TupleQuery tupleQuery) throws IDMapperException {
 		Map<Xref, Set<Xref>> map = new HashMap<Xref, Set<Xref>>();
 		Map<Xref, String> virusLabel = new HashMap<Xref, String>();
 		for (BindingSet bs : QueryResults.asList(tupleQuery.evaluate())) {
@@ -104,24 +121,8 @@ public class SarsCov2Proteins {
 			}
 		}
 		addEntries(map, virusLabel);
-		newDb.finalize();
-		System.out.println("[INFO]: Database finished.");
-		runQC(oldDb, outputFile);
 	}
-	
-	private static void createDb(File outputFile) throws IDMapperException {
-		newDb = new GdbConstructImpl3(outputFile.getAbsolutePath(),new DataDerby(), DBConnector.PROP_RECREATE);
-		newDb.createGdbTables();
-		newDb.preInsert();
-		
-		String dateStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		newDb.setInfo("BUILDDATE", dateStr);
-		newDb.setInfo("DATASOURCENAME", "Wikidata");
-		newDb.setInfo("DATASOURCEVERSION", "1.0.0");
-		newDb.setInfo("SERIES", "humancorona");
-		newDb.setInfo("DATATYPE", "GeneProduct");	
-	}
-	
+
 	private static void setupDatasources() {
 		DataSourceTxt.init();
 		dsWikiData = DataSource.getExistingBySystemCode("Wd");
@@ -131,17 +132,8 @@ public class SarsCov2Proteins {
 		dsGuideToPharma = DataSource.getExistingBySystemCode("Gpt");
 	}
 
-	private static String readQuery(String path) throws IOException {
-		String content = readFile(path, StandardCharsets.UTF_8);
-		return content;
-	}
-
-	private static String readFile(String path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
-	}
-
-	private static void addEntries(Map<Xref, Set<Xref>> dbEntries, Map<Xref, String> virusLabel) throws IDMapperException {
+	private static void addEntries(Map<Xref, Set<Xref>> dbEntries, Map<Xref, String> virusLabel)
+			throws IDMapperException {
 		Set<Xref> addedXrefs = new HashSet<Xref>();
 		for (Xref ref : dbEntries.keySet()) {
 			Xref mainXref = ref;
@@ -153,17 +145,12 @@ public class SarsCov2Proteins {
 
 			for (Xref rightXref : dbEntries.get(mainXref)) {
 				if (!rightXref.equals(mainXref) && rightXref != null) {
-					if (addedXrefs.add(rightXref)) newDb.addGene(rightXref);
+					if (addedXrefs.add(rightXref))
+						newDb.addGene(rightXref);
 					newDb.addLink(mainXref, rightXref);
 				}
 			}
-			System.out.println("[INFO]: Commit " + mainXref);
 			newDb.commit();
 		}
-	}
-	
-	private static void runQC(File oldDB, File newDB) throws IDMapperException, SQLException{
-		BridgeQC qc = new BridgeQC (oldDB, newDB);
-		qc.run();
 	}
 }
