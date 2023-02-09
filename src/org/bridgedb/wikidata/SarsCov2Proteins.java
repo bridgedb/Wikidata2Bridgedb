@@ -1,6 +1,5 @@
 /**
-Copyright 2020 Martina Kutmon
-          2021 Egon Willighagen
+Copyright 2022 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -54,7 +53,7 @@ import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
  * @author mkutmon
  *
  */
-public class Wikidata2BridgeDb {
+public class SarsCov2Proteins {
 
 	private static DataSource dsWikiData;
 	private static DataSource dsNcbi;
