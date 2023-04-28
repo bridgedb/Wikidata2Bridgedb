@@ -5,7 +5,7 @@
 	<version>0.0.2-SNAPSHOT</version>
 
 	<properties>
-		<bridgedb.version>3.0.21</bridgedb.version>
+		<bridgedb.version>3.0.22-SNAPSHOT</bridgedb.version>
 		<slf4j.version>2.0.6</slf4j.version>
 	</properties>
 
