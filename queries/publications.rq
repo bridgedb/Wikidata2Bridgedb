@@ -1,4 +1,4 @@
-SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?doi ?pmid WHERE {
+SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?doi ?pmid ?pmcid WHERE {
   ?wdRoot wdt:P356 ?doi ;
           wdt:P698 ?pmid .
   {
@@ -7,4 +7,5 @@ SELECT DISTINCT (substr(STR(?wdRoot),32) AS ?wikidata) ?doi ?pmid WHERE {
     { ?pathway wdt:P3937 [] }
     ?pathway wdt:P2860 ?wdRoot .
   }
+  OPTIONAL { ?wdRoot wdt:P932 ?pmcid }
 }

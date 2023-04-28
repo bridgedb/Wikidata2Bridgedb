@@ -53,6 +53,7 @@ public class Publications {
 	private static DataSource dsWikiData;
 	private static DataSource dsDOI;
 	private static DataSource dsPubMed;
+	private static DataSource dsPubMedCentral;
 	private static GdbConstruct newDb;
 	
 	public static void main(String[] args) throws IOException, IDMapperException, SQLException {
@@ -89,6 +90,14 @@ public class Publications {
 					System.out.println(doiRef);
 					System.out.println(pmidRef);
 				}
+				if (fields.length > 3 && !(fields[3].isEmpty())) {
+					String pmcid = fields[3].replaceAll("\"", "");
+					Xref pmcidRef = new Xref("PMC" + pmcid, dsPubMedCentral);
+					map.get(wdid).add(pmcidRef);
+					System.out.println(wdid);
+					System.out.println(doiRef);
+					System.out.println(pmcidRef);
+				}
 			}
 			dataRow = file.readLine();
 			counter++;
@@ -117,7 +126,7 @@ public class Publications {
 		newDb.setInfo("BUILDDATE", dateStr);
 		newDb.setInfo("DATASOURCENAME", "Wikidata");
 		newDb.setInfo("DATASOURCEVERSION", "1.0.0");
-		newDb.setInfo("BRIDGEDBVERSION", "3.0.2");
+		newDb.setInfo("BRIDGEDBVERSION", "3.0.22-SNAPSHOT");
 		newDb.setInfo("SERIES", "publications");
 		newDb.setInfo("DATATYPE", "Article");	
 	}
@@ -127,6 +136,7 @@ public class Publications {
 		dsWikiData = DataSource.getExistingBySystemCode("Wd");
 		dsDOI = DataSource.getExistingBySystemCode("Pbd");
 		dsPubMed = DataSource.getExistingBySystemCode("Pbm");
+		dsPubMedCentral = DataSource.getExistingBySystemCode("Pmc");
 	}
 
 	private static String readQuery(String path) throws IOException {
