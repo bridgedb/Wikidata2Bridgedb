@@ -15,7 +15,7 @@ curl -H "Accept: text/tab-separated-values" --data-urlencode query@queries/publi
 
 ```shell
 mvn clean install assembly:single
-java -cp target/Wikidata2BridgeDb-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.bridgedb.wikidata.Publications
+java -cp target/Wikidata2BridgeDb-0.0.2-SNAPSHOT-jar-with-dependencies.jar org.bridgedb.wikidata.Publications
 ```
 
 ## How to cite?
