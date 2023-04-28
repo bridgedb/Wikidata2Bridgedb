@@ -7,6 +7,7 @@
 	<properties>
 		<bridgedb.version>3.0.22-SNAPSHOT</bridgedb.version>
 		<slf4j.version>2.0.6</slf4j.version>
+		<derby.version>10.15.2.0</derby.version>
 	</properties>
 
 	<build>
@@ -51,11 +52,23 @@
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.rdb</artifactId>
 			<version>${bridgedb.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.rdb.construct</artifactId>
 			<version>${bridgedb.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>mysql</groupId>
+					<artifactId>mysql-connector-java</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
@@ -71,6 +84,26 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbytools</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyshared</artifactId>
+			<version>${derby.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derbyclient</artifactId>
+			<version>${derby.version}</version>
 		</dependency>
 	</dependencies>
 </project>
